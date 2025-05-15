@@ -18,10 +18,14 @@ def main():
 
     # rendering text
     text_title = font_title.render("CLICK TO ROLL", True, "black")
-    text_subtitle = font_subtitle.render("Previous Results", True, (50, 50, 85))
+    text_subtitle = font_subtitle.render("Previous Results", True, "black")
+    text_again = font_subtitle.render("(CLICK TO ROLL AGAIN)", True, "grey")
+    text_roll =font_subtitle.render("ROLLING", True, "grey")
 
     title_rect = text_title.get_rect(center=(200, 80))
     subtitle_rect = text_subtitle.get_rect(center=(100, 400))
+    again_rect = text_again.get_rect(center=(200, 80))
+    roll_rect = text_roll.get_rect(center=(200, 80))
 
     # rendering and positioning images
     dice_img = pygame.image.load("assets/dice.png")
@@ -52,11 +56,21 @@ def main():
     dice_6 = pygame.transform.scale(dice_6, (200, 215)) # scaling image
     dice_6_rect = dice_6.get_rect(center=(200, 220))
 
+    dice_faces = [dice_1, dice_2, dice_3, dice_4, dice_5, dice_6] # list of dice faces
     game_state = "waiting"
 
     # function to choose a random number between 1-6
     def roll_dice(history):
         nonlocal game_state
+                
+        # rolling animation
+        for _ in range(15): # 15 is the number of frames
+            face = random.choice(dice_faces)
+            window.fill("white") # clearing the window
+            window.blit(text_roll, roll_rect)
+            window.blit(face, face.get_rect(center=dice_rect.center)) # showing random face
+            pygame.display.flip() # updating the window
+            pygame.time.delay(50) # delay between frames
         
         game_state = "playing"
 
@@ -66,16 +80,6 @@ def main():
         # print(f'Previous results: {history}') # printing in console
         
         return result
-
-    # answ = input("Do you want to roll the dice? (y/n):").lower() # asking user in console
-
-    # # checking if the user wants to roll the dice in console
-    # if answ == "y":
-    #     roll_dice(history)
-    # elif answ == "n":
-    #     print("Not rolling the dice")
-    # else:
-    #     print("Invalid input, enter 'y' or 'n'")
 
     running = True
     # inifite loop to keep window open
@@ -94,6 +98,7 @@ def main():
             window.blit(text_title, title_rect)
             window.blit(dice_img, dice_rect)
         elif game_state == "playing":
+            window.blit(text_again, again_rect)
             window.blit(text_subtitle, subtitle_rect)
 
             # showing the dice image based on the result
